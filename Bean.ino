@@ -25,8 +25,9 @@ void loop(){
 		if(Bean.checkMotionEvent(ANY_MOTION_EVENT) && !motionDetected){
 			motionDetected = true;
 		}
-		else if (!Bean.checkMotionEvent && !motionDetected)
+		else if (!Bean.checkMotionEvent && !motionDetected){
 			motionDetected = false;
+		}
 
 	}
 
