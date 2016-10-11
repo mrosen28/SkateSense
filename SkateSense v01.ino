@@ -12,7 +12,7 @@ void setup(){
 		Bean.setAccelerometerPowerMode(VALUE_NORMAL_MODE);
 	}
 	/* Check Battery Level on Startup */
-	batteryCheck(int batteryPercentage, int batteryVoltage,float actualBatteryVoltage, int batteryCheckButtonStatus);
+	batteryCheck();
 
 	/* Get Connection State */
 	bluetoothConnectionState = Bean.getConnectionState();
@@ -28,7 +28,7 @@ void setup(){
 void loop(){
 	/* If Motion is Detected Start Log */
 	detectMotion();
-		if(!motionDetected){
+	if(!motionDetected){
 			Bean.sleep(1000);
 		}
 	while(motionDetected){
@@ -80,7 +80,7 @@ void detectMotion(){
 			motionDetected = false;
 		}
 }
-void batteryCheck(int batteryPercentage, int batteryVoltage,float actualBatteryVoltage, int batteryCheckButtonStatus){
+void batteryCheck(){
 		//Declaring Variables
 		int batteryPercentage = Bean.getBatteryLevel; //Returns Level of Battery in Percent
 		int batteryVoltage = Bean.getBatteryVoltage; //Returns Battery Voltage (191 - 353)
