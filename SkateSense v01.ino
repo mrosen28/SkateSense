@@ -103,6 +103,6 @@ void batteryCheck(int batteryPercentage, int batteryVoltage,float actualBatteryV
 					Bean.setLed(255,0,15)
 				}
 			/* Shows PowerState LED for 2.5s, Turns off LED and Moves On */
-			Bean.sleep(2500); 
+			delay(2500); 
 			Bean.setLed(0,0,0);
 }
