@@ -1,7 +1,9 @@
 #include <Adafruit_L3GD20.h> // Library for Gyroscope
 
-bool bluetoothState;
+bool bluetoothConnectionState;
 bool motionDetected;
+
+Adafruit_L3GD20 gyro();
 
 void setup(){
 	//Allows Bean to Detect Motion Events
@@ -9,37 +11,65 @@ void setup(){
 	if(Bean.getAccelerometerPowerMode() != VALUE_NORMAL_MODE){
 		Bean.setAccelerometerPowerMode(VALUE_NORMAL_MODE);
 	}
-
-
-	//Serial Port Initialized Automatically
-}
-
-void loop(){
 	/* Check Battery Level on Startup */
 	batteryCheck(int batteryPercentage, int batteryVoltage,float actualBatteryVoltage, int batteryCheckButtonStatus);
 
-	if(!bluetoothState){
-		/* START ADVERTISING */
-	}
+	/* Get Connection State */
+	bluetoothConnectionState = Bean.getConnectionState();
 
-	record();
-		while(motionDetected){
-			/* MAKE LOG */
-			//After Log Update: Check if Board is Still Moving
+	/* Wait for Bluetooth Connection */
+	while(!bluetoothState){
+		delay(1000)//Wait 1s
+		bluetoothConnectionState = Bean.getConnectionState();
+	}
+		
+}
+
+void loop(){
+	/* If Motion is Detected Start Log */
+	detectMotion();
+		if(!motionDetected){
+			Bean.sleep(1000);
+		}
+	while(motionDetected){
+		/* MAKE LOG */
+			gyro.read(); //Updates Gyroscope Values
+
+			/* Updates Data Array (MotionDetected,X,Y,Z) */
+			logValues = {Bean.checkMotionEvent(ANY_MOTION_EVENT), gyro.data.x, gyro.data.y, gyro.data.z};
+
+			/* Transmit Data */
+			Serial.print(logValues)
+			delay(100);
+
+		/* After Log Update: Check if Board is Still Moving */
 			detectMotion();
 
-			//If motion is not detected, wait 10s before checking again.
-			if(!motionDetected){
-				Bean.sleep(10000);
-				detectMotion();
-
-				//If motion isn't detected after second check, turn off SkateSense
+		/* If motion is not detected, wait 1s before checking again for 5s. */
 				if(!motionDetected){
-					/* Power Off */
-				}
+				Bean.sleep(1000);
+				detectMotion() 
+
+					if(!motionDetected){
+					Bean.sleep(1000);
+					detectMotion();
+
+						if(!motionDetected){
+						Bean.sleep(1000);
+						detectMotion();
+
+							if(!motionDetected){
+							Bean.sleep(1000);
+							detectMotion();
+
+								if(!motionDetected){
+								Bean.sleep(1000);
+								detectMotion();
+				}}}}}
+				
 			}
 		}
-}
+	
 
 
 void detectMotion(){
@@ -76,4 +106,3 @@ void batteryCheck(int batteryPercentage, int batteryVoltage,float actualBatteryV
 			Bean.sleep(2500); 
 			Bean.setLed(0,0,0);
 }
-
