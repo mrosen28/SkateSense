@@ -1,8 +1,4 @@
 #include <Adafruit_L3GD20.h> // Library for Gyroscope
-
-bool bluetoothConnectionState;
-bool motionDetected;
-
 Adafruit_L3GD20 gyro();
 
 void setup(){
@@ -15,13 +11,17 @@ void setup(){
 	batteryCheck();
 
 	/* Get Connection State */
-	bluetoothConnectionState = Bean.getConnectionState();
+	bool bluetoothConnectionState = Bean.getConnectionState();
 
 	/* Wait for Bluetooth Connection */
-	while(!bluetoothState){
+	while(!bluetoothConnectionState){
+		Bean.setLed(0,0,0);
 		delay(1000)//Wait 1s
+		Bean.setLed(0,0,255);
 		bluetoothConnectionState = Bean.getConnectionState();
 	}
+
+	Bean.setLed(0,0,255);
 		
 }
 
@@ -33,6 +33,7 @@ void loop(){
 		}
 	while(motionDetected){
 		/* MAKE LOG */
+		Bean.setLed(255,0,0);
 			gyro.read(); //Updates Gyroscope Values
 
 			/* Updates Data Array (MotionDetected,X,Y,Z) */
@@ -65,7 +66,19 @@ void loop(){
 				if(!motionDetected){
 					Bean.sleep(1000);
 					detectMotion();
-				}}}}}
+				}}}}}/* If no motion is detected, Check Bluetooth State and Set LED */
+					if(bluetoothConnectionState){
+						Bean.setLed(0,0,255);
+					}
+					else(!bluetoothConnectionState){
+						while(!bluetoothConnectionState){
+								Bean.setLed(0,0,0);
+								delay(1000)//Wait 1s
+								Bean.setLed(0,0,255);
+								bluetoothConnectionState = Bean.getConnectionState();
+	}
+					}
+				
 				
 			}
 		}
@@ -74,10 +87,10 @@ void loop(){
 
 void detectMotion(){
 		if(Bean.checkMotionEvent(ANY_MOTION_EVENT)){
-			motionDetected = true;
+			bool motionDetected = true;
 		}
 		else if (!Bean.checkMotionEvent(ANY_MOTION_EVENT)){
-			motionDetected = false;
+			bool motionDetected = false;
 		}
 }
 void batteryCheck(){
