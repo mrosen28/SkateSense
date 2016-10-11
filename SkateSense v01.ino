@@ -47,24 +47,24 @@ void loop(){
 
 		/* If motion is not detected, wait 1s before checking again for 5s. */
 				if(!motionDetected){
-				Bean.sleep(1000);
-				detectMotion() 
+					Bean.sleep(1000);
+					detectMotion() 
 
-					if(!motionDetected){
+				if(!motionDetected){
 					Bean.sleep(1000);
 					detectMotion();
 
-						if(!motionDetected){
-						Bean.sleep(1000);
-						detectMotion();
+				if(!motionDetected){
+					Bean.sleep(1000);
+					detectMotion();
 
-							if(!motionDetected){
-							Bean.sleep(1000);
-							detectMotion();
+				if(!motionDetected){
+					Bean.sleep(1000);
+					detectMotion();
 
-								if(!motionDetected){
-								Bean.sleep(1000);
-								detectMotion();
+				if(!motionDetected){
+					Bean.sleep(1000);
+					detectMotion();
 				}}}}}
 				
 			}
