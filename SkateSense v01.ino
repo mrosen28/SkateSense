@@ -44,27 +44,27 @@ void loop(){
 			delay(100);
 
 		/* After Log Update: Check if Board is Still Moving */
-			detectMotion();
+				detectMotion();
 
 		/* If motion is not detected, wait 1s before checking again for 5s. */
 				if(!motionDetected){
-					Bean.sleep(1000);
+					delay(1000);
 					detectMotion() 
 
 				if(!motionDetected){
-					Bean.sleep(1000);
+					delay(1000);
 					detectMotion();
 
 				if(!motionDetected){
-					Bean.sleep(1000);
+					delay(1000);
 					detectMotion();
 
 				if(!motionDetected){
-					Bean.sleep(1000);
+					delay(1000);
 					detectMotion();
 
 				if(!motionDetected){
-					Bean.sleep(1000);
+					delay(1000);
 					detectMotion();
 				}}}}}/* If no motion is detected, Check Bluetooth State and Set LED */
 					if(bluetoothConnectionState){
