@@ -1,131 +1,91 @@
-#include <Adafruit_L3GD20.h> // Library for Gyroscope
-;
+#include <Adafruit_L3GD20.h>; // Library for Gyroscope
+#include <Wire.h>;
 
-void setup(){
-	//Allows Bean to Detect Motion Events
-	Bean.enableMotionEvent(ANY_MOTION_EVENT);
-	if(Bean.getAccelerometerPowerMode() != VALUE_NORMAL_MODE){
-		Bean.setAccelerometerPowerMode(VALUE_NORMAL_MODE);
-	}
-
-	/* Check Battery Level on Startup */
-	batteryCheck();
-
-	/* Get Connection State */
-	bool bluetoothConnectionState = Bean.getConnectionState();
-  
-
-	/* Wait for Bluetooth Connection */
-	while(!bluetoothConnectionState){
-		Bean.setLed(0,0,0);
-		delay(1000);//Wait 1s
-		Bean.setLed(0,0,255);
-		bluetoothConnectionState = Bean.getConnectionState();
-	}
-
-	Bean.setLed(0,0,255);
-		
-}
-
-void loop(){
-   /* Get Connection State */
-  bool bluetoothConnectionState = Bean.getConnectionState();
-	/* If Motion is Detected Start Log */
+#define USE_I2C
   Adafruit_L3GD20 gyro;
-  bool motionDetected = detectMotion;
-	detectMotion();
-	if(!motionDetected){
-			Bean.sleep(1000);
-		}
-	while(motionDetected){
-		/* MAKE LOG */
-		Bean.setLed(255,0,0);
-			gyro.read(); //Updates Gyroscope Values
-
-			/* Transmit Data */
-			Serial.print("Moving:");
-      Serial.print(Bean.checkMotionEvent(ANY_MOTION_EVENT));
-      Serial.println("Gyro X-Value:");
-      Serial.print(gyro.data.x);
-      Serial.println("Gyro Y-Value:");
-      Serial.print(gyro.data.y);
-      Serial.println("Gyro Z-Value:");
-      Serial.println(gyro.data.z);
-			delay(100);
-
-		/* After Log Update: Check if Board is Still Moving */
-				detectMotion();
-
-		/* If motion is not detected, wait 1s before checking again for 5s. */
-				if(!motionDetected){
-					delay(1000);
-					detectMotion(); 
-
-				if(!motionDetected){
-					delay(1000);
-					detectMotion();
-
-				if(!motionDetected){
-					delay(1000);
-					detectMotion();
-
-				if(!motionDetected){
-					delay(1000);
-					detectMotion();
-
-				if(!motionDetected){
-					delay(1000);
-					detectMotion();
-				}}}}}/* If no motion is detected, Check Bluetooth State and Set LED */
-					if(bluetoothConnectionState){
-						Bean.setLed(0,0,255);
-					}
-					else(!bluetoothConnectionState);{
-						while(!bluetoothConnectionState){
-								Bean.setLed(0,0,0);
-								delay(1000);//Wait 1s
-								Bean.setLed(0,0,255);
-								bool bluetoothConnectionState = Bean.getConnectionState();
-	}
-					}
-				
-				
-			}
-		}
-	
 
 
-void detectMotion(){
-		if(Bean.checkMotionEvent(ANY_MOTION_EVENT)){
-			bool motionDetected = true;
-		}
-		else if (!Bean.checkMotionEvent(ANY_MOTION_EVENT)){
-			bool motionDetected = false;
-		}
+void setup() {
+  Wire.begin();
+  Serial.begin(57600);
+  
+  //Allows Bean to Detect Motion Events
+  gyro.begin(gyro.L3DS20_RANGE_250DPS);
+  if (!gyro.begin(gyro.L3DS20_RANGE_250DPS)){
+    Serial.println("Oops ... unable to initialize the L3GD20. Check your wiring!");
+    delay (1000);
+  }
+  Bean.enableMotionEvent(ANY_MOTION_EVENT);
+  if(Bean.getAccelerometerPowerMode() != VALUE_NORMAL_MODE){
+    Bean.setAccelerometerPowerMode(VALUE_NORMAL_MODE);
+  }
+
+  /* Check Battery Level on Startup */
+  batteryCheck();
+
+  //Print "Initilize Complete"
+  Serial.println("Initialize Complete");
+  delay(100);
+
+  /* Get Connection State */
+  bool bluetoothConnectionState;
+  do {
+    bluetoothConnectionState = Bean.getConnectionState();
+    delay(10);
+  } while(!bluetoothConnectionState);
+  
+  Bean.setLed(0,0,255);
+    
 }
-void batteryCheck(){
-		//Declaring Variables
-		int batteryPercentage = Bean.getBatteryLevel(); //Returns Level of Battery in Percent
-		int batteryVoltage = Bean.getBatteryVoltage(); //Returns Battery Voltage (191 - 353)
-		float actualBatteryVoltage = batteryVoltage / 100; // Creates Value Between 1.91V and 3.53V)
-		
-			/* Checks Battery Level Range and Sets LED Accordingly */
-			if (batteryPercentage > 80){
-				Bean.setLed(0,255,0);
-			}
-				else if (batteryPercentage > 60){
-					Bean.setLed(255,255,0);
-				}
-				else if (batteryPercentage > 40){
-					Bean.setLed(255,150,0);
-				}
-				else if (batteryPercentage > 20){
-					Bean.setLed(255,75,0);
-				}
-				else {
-					Bean.setLed(255,0,15);
-				}
-			/* Shows PowerState LED for 2.5s, Turns off LED and Moves On */
-			delay(2500); 
-			Bean.setLed(0,0,0);}
 
+void loop() {
+
+    /* MAKE LOG */
+    Bean.setLed(255,255,255);
+
+      gyro.read(); //Updates Gyroscope Values
+        int xvalue1 = gyro.data.x;
+        int yvalue1 = gyro.data.y;
+        int zvalue1 = gyro.data.z;
+
+      //Transmit Data within 200ms
+      Bean.setLed(255,0,0);
+      Serial.print("Gyro X = ");
+      Serial.print(xvalue1);
+      delay(50);
+      Serial.print(" Gyro Y = ");
+      Serial.print(yvalue1);
+      delay(50);
+      Serial.print(" Gyro Z = ");
+      Serial.print(zvalue1);
+      delay(50);
+      Serial.println("");
+      delay(50);
+}
+  
+void batteryCheck() {
+    //Declaring Variables
+    int batteryPercentage = Bean.getBatteryLevel(); //Returns Level of Battery in Percent
+    int batteryVoltage = Bean.getBatteryVoltage(); //Returns Battery Voltage (191 - 353)
+    float actualBatteryVoltage = batteryVoltage / 100; // Creates Value Between 1.91V and 3.53V)
+    
+      /* Checks Battery Level Range and Sets LED Accordingly */
+      if (batteryPercentage > 80) {
+        Bean.setLed(0,255,0);
+      }
+        else if (batteryPercentage > 60) {
+          Bean.setLed(255,255,0);
+        }
+        else if (batteryPercentage > 40) {
+          Bean.setLed(255,150,0);
+        }
+        else if (batteryPercentage > 20) {
+          Bean.setLed(255,75,0);
+        }
+        else {
+          Bean.setLed(255,0,15);
+        }
+      /* Shows PowerState LED for 2s, Turns off LED and Moves On */
+      delay(2000); 
+      Bean.setLed(0,0,0);
+      }
