@@ -6,6 +6,7 @@
 
 
 void setup() {
+  bool startup = true;
   Wire.begin();
   Serial.begin(57600);
   
@@ -35,21 +36,23 @@ void setup() {
   } while(!bluetoothConnectionState);
   
   Bean.setLed(0,0,255);
-    
+  startup = false;
 }
 
 void loop() {
-
-    /* MAKE LOG */
-    Bean.setLed(255,255,255);
-
-      gyro.read(); //Updates Gyroscope Values
+    bool startup = false;
+    
+    /* MAKE LOG - One Blink = One Update*/
+    Bean.setLed(0,0,0); //Sets LED OFF
+    
+      gyro.read(); //Update Gyroscope Values
+      int batteryLevel = Bean.getBatteryLevel(); 
         int xvalue1 = gyro.data.x;
         int yvalue1 = gyro.data.y;
         int zvalue1 = gyro.data.z;
 
       //Transmit Data within 200ms
-      Bean.setLed(255,0,0);
+      Bean.setLed(255,0,0); //Sets LED RED
       Serial.print("Gyro X = ");
       Serial.print(xvalue1);
       delay(50);
@@ -59,6 +62,8 @@ void loop() {
       Serial.print(" Gyro Z = ");
       Serial.print(zvalue1);
       delay(50);
+      Serial.print(" Battery Level = ");
+      Serial.print(batteryLevel);
       Serial.println("");
       delay(50);
 }
@@ -66,13 +71,13 @@ void loop() {
 void batteryCheck() {
     //Declaring Variables
     int batteryPercentage = Bean.getBatteryLevel(); //Returns Level of Battery in Percent
-    int batteryVoltage = Bean.getBatteryVoltage(); //Returns Battery Voltage (191 - 353)
-    float actualBatteryVoltage = batteryVoltage / 100; // Creates Value Between 1.91V and 3.53V)
+    int batteryVoltage = Bean.getBatteryVoltage();
+    float actualBatteryVoltage = (batteryVoltage / 100); // Creates Value Between 1.91V and 3.53V)
     
-      /* Checks Battery Level Range and Sets LED Accordingly */
-      if (batteryPercentage > 80) {
+      /* Sets LED According to Battery Level */
+         if (batteryPercentage > 80) {
         Bean.setLed(0,255,0);
-      }
+        }
         else if (batteryPercentage > 60) {
           Bean.setLed(255,255,0);
         }
@@ -89,3 +94,4 @@ void batteryCheck() {
       delay(2000); 
       Bean.setLed(0,0,0);
       }
+
