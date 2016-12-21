@@ -78,7 +78,7 @@ float batteryCheck(bool startUp) {
     int batteryPercentage = Bean.getBatteryLevel(); //Returns Level of Battery in Percent
     float actualBatteryVoltage = (Bean.getBatteryVoltage() / 100); // Finds Voltage Between 1.91V and 3.53V
 
-    if(startUp == false){
+    if(startUp == true){
       /* Sets LED According to Battery Level */
          if (batteryPercentage > 80) {
         Bean.setLed(0,255,0);
