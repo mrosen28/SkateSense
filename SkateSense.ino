@@ -41,7 +41,7 @@ void setup() {
    //If the file is available, write to it:
    File dataFile = SD.open("datalog.txt", FILE_WRITE);
    if (dataFile) {
-     dataFile.println("Battery Level on Startup (Value Between 1.91V and 3.53V): ");
+     dataFile.println("Battery Voltage on Startup: ");
      dataFile.print(startUpBatteryLevel);
      dataFile.println("Bluetooth Connection:");
      dataFile.print(startupBluetoothConnectionState);
